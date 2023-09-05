@@ -15,12 +15,27 @@ resource "azurerm_virtual_network" "eastRGVnet" {
   address_space = ["10.0.0.0/16"]
 }
 
+resource "azurerm_subnet" "EastSubnet" {
+    name = "EastSubnet"
+    resource_group_name = azurerm_resource_group.EastRG.name
+    virtual_network_name = azurerm_virtual_network.eastRGVnet.name
+    address_prefixes = [ "10.0.1.0/24" ]
+}
+
 resource "azurerm_virtual_network" "WestRGVnet" {
     name = "WestUSVnet"
     resource_group_name = azurerm_resource_group.WestRG.name
     location = azurerm_resource_group.WestRG.location
-    address_space = [ "10.0.0.0/24" ]
+    address_space = [ "10.0.0.0/16" ]
     
+}
+
+resource "azurerm_subnet" "WestSubnet" {
+    name = "WestSubnet"
+    resource_group_name = azurerm_resource_group.WestRG.name
+    virtual_network_name = azurerm_virtual_network.WestRGVnet.name
+    address_prefixes = [ "10.0.1.0/24" ]
+  
 }
 
 resource "azurerm_virtual_network_peering" "peerEastToWest" {
@@ -75,7 +90,7 @@ resource "azurerm_linux_web_app" "WestUSWebApp" {
     resource_group_name = azurerm_resource_group.WestRG.name
     service_plan_id = azurerm_service_plan.WebAppServiceWest.id
     site_config {
-        
+
     }
 
   
@@ -117,10 +132,10 @@ resource "azurerm_traffic_manager_azure_endpoint" "PrimaryEndpoint" {
 
 }
 
-resource "azurerm_traffic_manager_azure_endpoint" "Seconddary Endpoint" {
+resource "azurerm_traffic_manager_azure_endpoint" "SeconddaryEndpoint" {
     name = "secondary endpoint"
     profile_id = azurerm_traffic_manager_profile.TrafficManager.id
-    target_resource_id = azurerm_linux_web_app.EastUSWebApp.id
+    target_resource_id = azurerm_linux_web_app.WestUSWebApp.id
   
 }
 
