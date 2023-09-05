@@ -87,3 +87,41 @@ resource "azurerm_app_service_source_control" "GitLinkEast" {
     branch = "master"
   
 }
+
+
+resource "azurerm_traffic_manager_profile" "TrafficManager" {
+    name = "WebappTrafficManager"
+    resource_group_name = azurerm_resource_group.EastRG.name
+    traffic_routing_method = "Priority"
+
+    dns_config {
+      relative_name = "TrafficManager"
+      ttl = 60
+
+    }
+
+    monitor_config {
+      protocol = "HTTPS"
+      port = 443
+      path = "/"
+    }
+
+    profile_status = "Enabled" 
+}
+
+resource "azurerm_traffic_manager_azure_endpoint" "PrimaryEndpoint" {
+    name = "Primary Endpoint"
+    profile_id = azurerm_traffic_manager_profile.TrafficManager.id
+    target_resource_id = azurerm_linux_web_app.EastUSWebApp.id
+    priority = 1 
+
+}
+
+resource "azurerm_traffic_manager_azure_endpoint" "Seconddary Endpoint" {
+    name = "secondary endpoint"
+    profile_id = azurerm_traffic_manager_profile.TrafficManager.id
+    target_resource_id = azurerm_linux_web_app.EastUSWebApp.id
+  
+}
+
+
