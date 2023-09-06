@@ -77,6 +77,9 @@ resource "azurerm_linux_web_app" "EastUSWebApp" {
     resource_group_name = azurerm_resource_group.EastRG.name
     service_plan_id = azurerm_service_plan.WebAppServiceEast.id
     site_config {
+        ip_restriction {
+          virtual_network_subnet_id = azurerm_subnet.EastSubnet.id
+        }
 
     }
 
@@ -90,6 +93,9 @@ resource "azurerm_linux_web_app" "WestUSWebApp" {
     resource_group_name = azurerm_resource_group.WestRG.name
     service_plan_id = azurerm_service_plan.WebAppServiceWest.id
     site_config {
+        ip_restriction {
+          virtual_network_subnet_id = azurerm_subnet.WestSubnet.id
+        }
 
     }
 
