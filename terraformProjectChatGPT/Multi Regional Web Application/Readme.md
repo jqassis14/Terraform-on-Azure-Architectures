@@ -1,5 +1,7 @@
 This project is a Multi-Regional Web applicaiton in Azure. 
 
+The project was proposed by ChatGPT, though every line of code is my own, including all code in the "WebAppFiles" folder. 
+
 Components include 
 
 1. Two Azure Resource groups, one in the East US and West US regions
