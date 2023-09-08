@@ -71,6 +71,17 @@ resource "azurerm_service_plan" "WebAppServiceWest" {
     location = azurerm_resource_group.WestRG.location
 }
 
+resource "azurerm_storage_account" "StorageAccount" {
+    name = "JQStorageAccount"   
+    resource_group_name = azurerm_resource_group.EastRG
+    location = azurerm_resource_group.EastRG.location
+    account_tier = "Standard"
+    account_replication_type = "ZRS"
+
+
+  
+}
+
 resource "azurerm_linux_web_app" "EastUSWebApp" {
     name = "EastUSWebApp"
     location = azurerm_service_plan.WebAppServiceEast.location
@@ -145,4 +156,21 @@ resource "azurerm_traffic_manager_azure_endpoint" "SeconddaryEndpoint" {
   
 }
 
+resource "azurerm_mssql_server" "JQWebAppServer" {
+    name = "jqwebappserver"
+    resource_group_name = azurerm_linux_web_app.EastUSWebApp
+    location = azurerm_resource_group.EastRG.location
+    version = "12.0"
+    administrator_login = "JQAdmin"
+    administrator_login_password = "fgJ34$bjt2ghk0987q"
 
+  
+}
+
+resource "azurerm_mssql_database" "SQLdatabase" {
+    name = "SQLDatabase"
+    server_id = azurerm_mssql_server.JQWebAppServer.id
+    sku_name = "S0"
+    zone_redundant = true
+    transparent_data_encryption_enabled = true 
+}
